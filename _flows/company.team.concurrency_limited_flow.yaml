@@ -1,0 +1,14 @@
+id: concurrency_limited_flow
+namespace: company.team
+
+concurrency:
+  behavior: FAIL
+  limit: 2
+
+tasks:
+  - id: wait
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - sleep 10

@@ -1,0 +1,18 @@
+id: triggers_example
+namespace: company.team
+
+tasks: 
+  - id: operation
+    type: io.kestra.core.tasks.log.Log
+    message: "FLOW STARTED AT {{trigger.date}}"
+    
+
+triggers:
+  - id: schedule
+    type: io.kestra.core.models.triggers.types.Schedule
+    cron: "*/5 * * * *"
+    allowConcurrent: false
+
+
+
+disabled: true

@@ -1,0 +1,10 @@
+id: dynamic_variable
+namespace: company.team
+
+variables:
+  time: "{{ now() }}"
+
+tasks:
+  - id: log
+    type: io.kestra.core.tasks.log.Log
+    message: "{{ render(vars.time) }}"

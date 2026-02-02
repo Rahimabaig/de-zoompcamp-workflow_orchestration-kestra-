@@ -1,0 +1,11 @@
+id: variables_practice
+namespace: company.team
+
+variables:
+  greet: hello
+  name: rahima
+
+tasks:
+  - id: log
+    type: io.kestra.plugin.core.debug.Return
+    format: "{{ vars.greet }} {{ vars.name }} to kestra!!"

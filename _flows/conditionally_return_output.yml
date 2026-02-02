@@ -1,0 +1,27 @@
+id: conditionally_return_output
+namespace: company.team
+
+inputs:
+  - id: run_task
+    type: BOOLEAN
+    defaults: true
+
+
+tasks:
+  - id: conditional
+    type: io.kestra.core.tasks.flows.If
+    condition: "{{inputs.run_task}}"
+    then:
+      - id: true_stmnt
+        type: io.kestra.core.tasks.debugs.Return
+        format: "HELLO RAHIMA!"
+    else:
+      - id: false_stmnt
+        type: io.kestra.core.tasks.debugs.Return
+        format: fallback output
+
+outputs:
+  - id: flow_output
+    type: STRING
+    value: "{{inputs.run_task ? outputs.true_stmnt.value: outputs.false_stmnt.value}}"
+
