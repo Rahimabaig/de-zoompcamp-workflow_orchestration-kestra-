@@ -1,0 +1,58 @@
+id: weather_flow
+namespace: company.team
+
+inputs:
+  - id: apikey
+    type: STRING
+    displayName: "Enter API key"
+
+  - id: cityname
+    type: STRING
+    displayName: "Enter city"
+
+tasks:
+  - id: fetch_weather
+    type: io.kestra.plugin.scripts.python.Script
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: python:3.13-slim
+
+    env:
+      API_KEY: "{{ inputs.apikey }}"
+      CITY_NAME: "{{ inputs.cityname }}"
+
+    dependencies:
+      - requests
+      - kestra
+
+    script: |
+      import requests
+      import os
+      from kestra import Kestra
+
+      api_key = os.getenv("API_KEY")
+      city = os.getenv("CITY_NAME")
+
+      url = (
+          f"http://api.openweathermap.org/data/2.5/weather"
+          f"?q={city}&appid={api_key}&units=metric"
+      )
+
+      response = requests.get(url)
+      data = response.json()
+
+      if response.status_code != 200:
+          raise Exception(f"Weather API error: {data}")
+
+      temperature = data["main"]["temp"]
+      description = data["weather"][0]["description"]
+
+      Kestra.outputs  ({
+          "city": city,
+          "temperature": temperature,
+          "description": description
+      })
+
+  - id: log_weather
+    type: io.kestra.plugin.core.log.Log
+    message: " Weather in {{ outputs.fetch_weather.vars.city }}:{{ outputs.fetch_weather.vars.temperature }}°C,{{ outputs.fetch_weather.vars.description }}"
